@@ -24,6 +24,12 @@ enum ConferenceStatus {
   COMPLETED
 }
 
+enum JournalStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
 enum InstitutionType {
   UNIVERSITY
   RESEARCH_INSTITUTE
@@ -129,6 +135,26 @@ model Conference {
   @@map("conferences")
 }
 
+model Journal {
+  id          String       @id @default(uuid())
+  name        String
+  acronym     String?
+  issn        String?      @unique
+  eissn       String?      @unique
+  description String?
+  website     String?
+  publisher   String?
+  impactFactor Float?      @map("impact_factor")
+  status      JournalStatus
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  papers Paper[]
+
+  @@map("journals")
+}
+
 model Paper {
   id             String      @id @default(uuid())
   title          String
@@ -138,6 +164,7 @@ model Paper {
   pdfUrl         String?     @map("pdf_url")
   publicationDate DateTime?  @map("publication_date")
   conferenceId   String?     @map("conference_id")
+  journalId      String?     @map("journal_id")
   venue          String?
   pages          String?
   volume         String?
@@ -150,6 +177,7 @@ model Paper {
 
   // Relations
   conference Conference? @relation(fields: [conferenceId], references: [id])
+  journal    Journal?    @relation(fields: [journalId], references: [id])
   authors    PaperAuthor[]
   keywords   PaperKeyword[]
   abstracts  Abstract[]

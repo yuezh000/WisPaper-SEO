@@ -113,6 +113,7 @@ export interface SearchQueryParams extends PaginationParams {
 export interface StatsOverview {
   total_papers: number
   total_conferences: number
+  total_journals: number
   total_authors: number
   pending_tasks: number
   failed_tasks: number

@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
     const [
       totalPapers,
       totalConferences,
+      totalJournals,
       totalAuthors,
       pendingTasks,
       failedTasks,
@@ -17,6 +18,7 @@ export async function GET(request: NextRequest) {
     ] = await Promise.all([
       prisma.paper.count(),
       prisma.conference.count(),
+      prisma.journal.count(),
       prisma.author.count(),
       prisma.task.count({ where: { status: 'PENDING' } }),
       prisma.task.count({ where: { status: 'FAILED' } }),
@@ -35,6 +37,7 @@ export async function GET(request: NextRequest) {
     const stats: StatsOverview = {
       total_papers: totalPapers,
       total_conferences: totalConferences,
+      total_journals: totalJournals,
       total_authors: totalAuthors,
       pending_tasks: pendingTasks,
       failed_tasks: failedTasks,
