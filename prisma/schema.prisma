@@ -1,0 +1,256 @@
+// WisPaper SEO Database Schema
+// Academic paper content management system with SEO optimization
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum PaperStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ConferenceStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+}
+
+enum InstitutionType {
+  UNIVERSITY
+  RESEARCH_INSTITUTE
+  COMPANY
+}
+
+enum AbstractSource {
+  ORIGINAL
+  AI_GENERATED
+  MANUAL
+}
+
+enum TaskType {
+  CRAWL
+  PARSE_PDF
+  GENERATE_ABSTRACT
+  INDEX_PAGE
+}
+
+enum TaskStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum LogLevel {
+  INFO
+  WARN
+  ERROR
+}
+
+// Core Models
+model Institution {
+  id        String   @id @default(uuid())
+  name      String
+  type      InstitutionType
+  country   String?
+  city      String?
+  website   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  authors Author[]
+
+  @@map("institutions")
+}
+
+model Author {
+  id            String   @id @default(uuid())
+  name          String
+  email         String?
+  orcid         String?  @unique
+  institutionId String   @map("institution_id")
+  bio           String?
+  homepage      String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  institution Institution @relation(fields: [institutionId], references: [id])
+  papers     PaperAuthor[]
+
+  @@map("authors")
+}
+
+model Venue {
+  id        String   @id @default(uuid())
+  name      String
+  city      String
+  country   String
+  address   String?
+  latitude  Float?
+  longitude Float?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  conferences Conference[]
+
+  @@map("venues")
+}
+
+model Conference {
+  id                 String            @id @default(uuid())
+  name               String
+  acronym            String?
+  description        String?
+  website            String?
+  submissionDeadline DateTime?         @map("submission_deadline")
+  notificationDate   DateTime?         @map("notification_date")
+  conferenceDate     DateTime?         @map("conference_date")
+  venueId            String?           @map("venue_id")
+  status             ConferenceStatus
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  venue  Venue?  @relation(fields: [venueId], references: [id])
+  papers Paper[]
+
+  @@map("conferences")
+}
+
+model Paper {
+  id             String      @id @default(uuid())
+  title          String
+  abstract       String?
+  doi            String?     @unique
+  arxivId        String?     @unique @map("arxiv_id")
+  pdfUrl         String?     @map("pdf_url")
+  publicationDate DateTime?  @map("publication_date")
+  conferenceId   String?     @map("conference_id")
+  venue          String?
+  pages          String?
+  volume         String?
+  issue          String?
+  citationCount  Int         @default(0) @map("citation_count")
+  status         PaperStatus
+  seoScore       Float?      @map("seo_score")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  conference Conference? @relation(fields: [conferenceId], references: [id])
+  authors    PaperAuthor[]
+  keywords   PaperKeyword[]
+  abstracts  Abstract[]
+
+  @@map("papers")
+}
+
+model Keyword {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  category   String?
+  frequency  Int      @default(1)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  papers PaperKeyword[]
+
+  @@map("keywords")
+}
+
+model Abstract {
+  id           String        @id @default(uuid())
+  paperId      String        @map("paper_id")
+  content      String
+  language     String        @default("en")
+  source       AbstractSource
+  qualityScore Float?        @map("quality_score")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  paper Paper @relation(fields: [paperId], references: [id])
+
+  @@map("abstracts")
+}
+
+model Task {
+  id           String     @id @default(uuid())
+  type         TaskType
+  status       TaskStatus
+  priority     Int        @default(5)
+  payload      Json
+  result       Json?
+  errorMessage String?    @map("error_message")
+  retryCount   Int        @default(0) @map("retry_count")
+  maxRetries   Int        @default(3) @map("max_retries")
+  scheduledAt  DateTime?  @map("scheduled_at")
+  startedAt    DateTime?  @map("started_at")
+  completedAt  DateTime?  @map("completed_at")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  // Relations
+  logs TaskLog[]
+
+  @@map("tasks")
+}
+
+model TaskLog {
+  id        String   @id @default(uuid())
+  taskId    String   @map("task_id")
+  level     LogLevel
+  message   String
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  task Task @relation(fields: [taskId], references: [id])
+
+  @@map("task_logs")
+}
+
+// Junction Tables
+model PaperAuthor {
+  id              String  @id @default(uuid())
+  paperId         String  @map("paper_id")
+  authorId        String  @map("author_id")
+  order           Int
+  isCorresponding Boolean @default(false) @map("is_corresponding")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  paper  Paper  @relation(fields: [paperId], references: [id])
+  author Author @relation(fields: [authorId], references: [id])
+
+  @@unique([paperId, authorId])
+  @@map("paper_authors")
+}
+
+model PaperKeyword {
+  id              String  @id @default(uuid())
+  paperId         String  @map("paper_id")
+  keywordId       String  @map("keyword_id")
+  relevanceScore  Float?  @map("relevance_score")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  paper   Paper   @relation(fields: [paperId], references: [id])
+  keyword Keyword @relation(fields: [keywordId], references: [id])
+
+  @@unique([paperId, keywordId])
+  @@map("paper_keywords")
+}
