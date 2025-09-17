@@ -91,7 +91,10 @@ export async function POST(request: NextRequest) {
     
     // Validate required fields
     if (!body.name || !body.type) {
-      return createErrorResponse('Name and type are required')
+      const missingFields = []
+      if (!body.name) missingFields.push('name')
+      if (!body.type) missingFields.push('type')
+      return createErrorResponse(`${missingFields.join(' and ')} are required`, 400, missingFields.join(' and '))
     }
 
     // Create institution

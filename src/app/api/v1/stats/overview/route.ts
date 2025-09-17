@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
       totalConferences,
       totalJournals,
       totalAuthors,
+      totalInstitutions,
       pendingTasks,
       failedTasks,
       avgSeoScore
@@ -20,6 +21,7 @@ export async function GET(request: NextRequest) {
       prisma.conference.count(),
       prisma.journal.count(),
       prisma.author.count(),
+      prisma.institution.count(),
       prisma.task.count({ where: { status: 'PENDING' } }),
       prisma.task.count({ where: { status: 'FAILED' } }),
       prisma.paper.aggregate({
@@ -39,6 +41,7 @@ export async function GET(request: NextRequest) {
       total_conferences: totalConferences,
       total_journals: totalJournals,
       total_authors: totalAuthors,
+      total_institutions: totalInstitutions,
       pending_tasks: pendingTasks,
       failed_tasks: failedTasks,
       seo_score_avg: avgSeoScore._avg.seoScore || 0

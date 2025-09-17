@@ -95,7 +95,26 @@ export async function POST(request: NextRequest) {
     
     // Validate required fields
     if (!body.type || !body.payload) {
-      return createErrorResponse('Type and payload are required')
+      const missingFields = []
+      if (!body.type) missingFields.push('type')
+      if (!body.payload) missingFields.push('payload')
+      return createErrorResponse(`${missingFields.join(' and ')} are required`, 400, missingFields.join(' and '))
+    }
+
+    // Validate task type enum
+    const validTaskTypes = ['CRAWL', 'PARSE_PDF', 'GENERATE_ABSTRACT', 'INDEX_PAGE']
+    if (!validTaskTypes.includes(body.type)) {
+      return createErrorResponse(`Invalid task type. Must be one of: ${validTaskTypes.join(', ')}`, 400, 'type')
+    }
+
+    // Validate priority range
+    if (body.priority !== undefined && (body.priority < 1 || body.priority > 10)) {
+      return createErrorResponse('Priority must be between 1 and 10', 400, 'priority')
+    }
+
+    // Validate payload is object
+    if (typeof body.payload !== 'object' || body.payload === null) {
+      return createErrorResponse('Payload must be a valid JSON object', 400, 'payload')
     }
 
     // Create task

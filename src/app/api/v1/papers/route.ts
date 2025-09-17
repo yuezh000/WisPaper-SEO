@@ -149,7 +149,10 @@ export async function POST(request: NextRequest) {
     
     // Validate required fields
     if (!body.title || !body.author_ids || body.author_ids.length === 0) {
-      return createErrorResponse('Title and at least one author are required')
+      const missingFields = []
+      if (!body.title) missingFields.push('title')
+      if (!body.author_ids || body.author_ids.length === 0) missingFields.push('author')
+      return createErrorResponse(`${missingFields.join(' and ')} are required`, 400, missingFields.join(' and '))
     }
 
     // Create paper with transaction
@@ -211,7 +214,27 @@ export async function POST(request: NextRequest) {
       return newPaper
     })
 
-    return createApiResponse(paper, 'Paper created successfully', undefined, 201)
+    // Transform data
+    const transformedPaper = {
+      id: paper.id,
+      title: paper.title,
+      abstract: paper.abstract,
+      doi: paper.doi,
+      arxiv_id: paper.arxivId,
+      pdf_url: paper.pdfUrl,
+      publication_date: paper.publicationDate,
+      venue: paper.venue,
+      pages: paper.pages,
+      volume: paper.volume,
+      issue: paper.issue,
+      citation_count: paper.citationCount,
+      status: paper.status,
+      seo_score: paper.seoScore,
+      created_at: paper.createdAt,
+      updated_at: paper.updatedAt
+    }
+
+    return createApiResponse(transformedPaper, 'Paper created successfully', undefined, 201)
   } catch (error) {
     return handleApiError(error)
   }

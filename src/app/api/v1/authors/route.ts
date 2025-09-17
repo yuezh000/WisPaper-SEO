@@ -89,17 +89,28 @@ export async function POST(request: NextRequest) {
     
     // Validate required fields
     if (!body.name || !body.institution_id) {
-      return createErrorResponse('Name and institution_id are required')
+      const missingFields = []
+      if (!body.name) missingFields.push('name')
+      if (!body.institution_id) missingFields.push('institution_id')
+      return createErrorResponse(`${missingFields.join(' and ')} are required`, 400, missingFields.join(' and '))
     }
 
-    // Check if institution exists
-    const institution = await prisma.institution.findUnique({
-      where: { id: body.institution_id }
-    })
-
-    if (!institution) {
-      return createErrorResponse('Institution not found', 404)
+    // Validate email format if provided
+    if (body.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(body.email)) {
+        return createErrorResponse('Invalid email format', 400, 'email')
+      }
     }
+
+    // Validate ORCID format if provided
+    if (body.orcid) {
+      const orcidRegex = /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/
+      if (!orcidRegex.test(body.orcid)) {
+        return createErrorResponse('Invalid ORCID format. Must be in format: 0000-0000-0000-0000', 400, 'orcid')
+      }
+    }
+
 
     // Create author
     const author = await prisma.author.create({

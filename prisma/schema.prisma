@@ -83,7 +83,7 @@ model Author {
   id            String   @id @default(uuid())
   name          String
   email         String?
-  orcid         String?  @unique
+  orcid         String?
   institutionId String   @map("institution_id")
   bio           String?
   homepage      String?
@@ -139,8 +139,8 @@ model Journal {
   id          String       @id @default(uuid())
   name        String
   acronym     String?
-  issn        String?      @unique
-  eissn       String?      @unique
+  issn        String?
+  eissn       String?
   description String?
   website     String?
   publisher   String?
@@ -159,8 +159,8 @@ model Paper {
   id             String      @id @default(uuid())
   title          String
   abstract       String?
-  doi            String?     @unique
-  arxivId        String?     @unique @map("arxiv_id")
+  doi            String?
+  arxivId        String?     @map("arxiv_id")
   pdfUrl         String?     @map("pdf_url")
   publicationDate DateTime?  @map("publication_date")
   conferenceId   String?     @map("conference_id")
@@ -187,7 +187,7 @@ model Paper {
 
 model Keyword {
   id         String   @id @default(uuid())
-  name       String   @unique
+  name       String
   category   String?
   frequency  Int      @default(1)
   createdAt  DateTime @default(now()) @map("created_at")
@@ -264,7 +264,6 @@ model PaperAuthor {
   paper  Paper  @relation(fields: [paperId], references: [id])
   author Author @relation(fields: [authorId], references: [id])
 
-  @@unique([paperId, authorId])
   @@map("paper_authors")
 }
 
@@ -279,6 +278,5 @@ model PaperKeyword {
   paper   Paper   @relation(fields: [paperId], references: [id])
   keyword Keyword @relation(fields: [keywordId], references: [id])
 
-  @@unique([paperId, keywordId])
   @@map("paper_keywords")
 }

@@ -115,6 +115,7 @@ export interface StatsOverview {
   total_conferences: number
   total_journals: number
   total_authors: number
+  total_institutions: number
   pending_tasks: number
   failed_tasks: number
   seo_score_avg: number

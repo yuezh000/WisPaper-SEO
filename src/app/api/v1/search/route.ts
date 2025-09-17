@@ -16,6 +16,15 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Search query is required', 400)
     }
 
+    // Validate pagination parameters
+    if (page < 1) {
+      return createErrorResponse('Page number must be greater than 0', 400, 'page')
+    }
+
+    if (limit < 1 || limit > 100) {
+      return createErrorResponse('Limit must be between 1 and 100', 400, 'limit')
+    }
+
     const searchTerm = query.trim()
     const results: any = {
       papers: [],

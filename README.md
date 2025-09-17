@@ -205,3 +205,10 @@ npx prisma studio      # 打开数据库管理界面
 - **Sitemap 管理**: 自动生成和更新 sitemap
 - **元数据优化**: 动态生成页面标题和描述
 - **页面速度**: 优化 Core Web Vitals 指标
+
+## 📚 文档
+
+- [API 文档](./API.md) - 完整的 API 接口文档
+- [设计文档](./DESIGN.md) - 系统架构和设计理念
+- [管理文档](./ADMIN.md) - 管理员操作指南
+- [命名规范](./NAMING_CONVENTIONS.md) - 项目命名规范和约定

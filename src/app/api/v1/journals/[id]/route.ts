@@ -5,10 +5,10 @@ import { createApiResponse, createErrorResponse, handleApiError, isValidUUID } f
 // GET /api/v1/journals/[id] - Get journal by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     if (!isValidUUID(id)) {
       return createErrorResponse('Invalid journal ID format', 400)
@@ -92,10 +92,10 @@ export async function GET(
 // PUT /api/v1/journals/[id] - Update journal
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     const body = await request.json()
 
     if (!isValidUUID(id)) {
@@ -152,10 +152,10 @@ export async function PUT(
 // DELETE /api/v1/journals/[id] - Delete journal
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     if (!isValidUUID(id)) {
       return createErrorResponse('Invalid journal ID format', 400)

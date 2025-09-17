@@ -97,7 +97,10 @@ export async function POST(request: NextRequest) {
     
     // Validate required fields
     if (!body.name || !body.status) {
-      return createErrorResponse('Name and status are required')
+      const missingFields = []
+      if (!body.name) missingFields.push('name')
+      if (!body.status) missingFields.push('status')
+      return createErrorResponse(`${missingFields.join(' and ')} are required`, 400, missingFields.join(' and '))
     }
 
     // Create journal

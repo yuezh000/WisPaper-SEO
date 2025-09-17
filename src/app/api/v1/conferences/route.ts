@@ -100,7 +100,34 @@ export async function POST(request: NextRequest) {
     
     // Validate required fields
     if (!body.name || !body.status) {
-      return createErrorResponse('Name and status are required')
+      const missingFields = []
+      if (!body.name) missingFields.push('name')
+      if (!body.status) missingFields.push('status')
+      return createErrorResponse(`${missingFields.join(' and ')} are required`, 400, missingFields.join(' and '))
+    }
+
+    // Validate status enum
+    const validStatuses = ['UPCOMING', 'ONGOING', 'COMPLETED']
+    if (!validStatuses.includes(body.status)) {
+      return createErrorResponse(`Invalid status. Must be one of: ${validStatuses.join(', ')}`, 400, 'status')
+    }
+
+    // Validate date logic
+    if (body.submission_deadline && body.conference_date) {
+      const submissionDate = new Date(body.submission_deadline)
+      const conferenceDate = new Date(body.conference_date)
+      if (submissionDate >= conferenceDate) {
+        return createErrorResponse('Submission deadline must be before conference date', 400, 'deadline')
+      }
+    }
+
+    // Validate website URL format
+    if (body.website) {
+      try {
+        new URL(body.website)
+      } catch {
+        return createErrorResponse('Invalid website URL format', 400, 'website')
+      }
     }
 
     // Create conference

@@ -6,10 +6,10 @@ import { UpdatePaperRequest } from '@/types/api'
 // GET /api/v1/papers/[id] - Get paper by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     if (!isValidUUID(id)) {
       return createErrorResponse('Invalid paper ID format', 400)
@@ -101,10 +101,10 @@ export async function GET(
 // PUT /api/v1/papers/[id] - Update paper
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     const body: UpdatePaperRequest = await request.json()
 
     if (!isValidUUID(id)) {
@@ -194,10 +194,10 @@ export async function PUT(
 // DELETE /api/v1/papers/[id] - Delete paper
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     if (!isValidUUID(id)) {
       return createErrorResponse('Invalid paper ID format', 400)
