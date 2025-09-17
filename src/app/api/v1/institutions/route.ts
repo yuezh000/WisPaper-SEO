@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
         { city: { contains: search, mode: 'insensitive' } },
         { country: { contains: search, mode: 'insensitive' } }
       ]
@@ -46,31 +47,11 @@ export async function GET(request: NextRequest) {
       where,
       orderBy,
       skip: (page - 1) * limit,
-      take: limit,
-      include: {
-        _count: {
-          select: {
-            authors: true
-          }
-        }
-      }
+      take: limit
     })
 
-    // Transform data
-    const transformedInstitutions = institutions.map(institution => ({
-      id: institution.id,
-      name: institution.name,
-      type: institution.type,
-      country: institution.country,
-      city: institution.city,
-      website: institution.website,
-      author_count: institution._count.authors,
-      created_at: institution.createdAt,
-      updated_at: institution.updatedAt
-    }))
-
     return createApiResponse(
-      transformedInstitutions,
+      institutions,
       'Institutions retrieved successfully',
       {
         page,
@@ -94,7 +75,7 @@ export async function POST(request: NextRequest) {
       const missingFields = []
       if (!body.name) missingFields.push('name')
       if (!body.type) missingFields.push('type')
-      return createErrorResponse(`${missingFields.join(' and ')} are required`, 400, missingFields.join(' and '))
+      return createErrorResponse(`${missingFields.join(' and ')} are required`, 400)
     }
 
     // Create institution
@@ -102,25 +83,14 @@ export async function POST(request: NextRequest) {
       data: {
         name: body.name,
         type: body.type,
+        description: body.description,
         country: body.country,
         city: body.city,
         website: body.website
       }
     })
 
-    // Transform data
-    const transformedInstitution = {
-      id: institution.id,
-      name: institution.name,
-      type: institution.type,
-      country: institution.country,
-      city: institution.city,
-      website: institution.website,
-      created_at: institution.createdAt,
-      updated_at: institution.updatedAt
-    }
-
-    return createApiResponse(transformedInstitution, 'Institution created successfully', undefined, 201)
+    return createApiResponse(institution, 'Institution created successfully', undefined, 201)
   } catch (error) {
     return handleApiError(error)
   }

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ConferenceStatus } from '@/generated/prisma'
+// Removed ConferenceStatus enum import - now using string type
 
 interface Venue {
   id: string
@@ -26,7 +26,7 @@ export default function NewConferencePage() {
     notificationDate: '',
     conferenceDate: '',
     venueId: '',
-    status: ConferenceStatus.UPCOMING
+    status: 'UPCOMING'
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -207,9 +207,9 @@ export default function NewConferencePage() {
               onChange={handleInputChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
             >
-              <option value={ConferenceStatus.UPCOMING}>即将开始</option>
-              <option value={ConferenceStatus.ONGOING}>进行中</option>
-              <option value={ConferenceStatus.COMPLETED}>已结束</option>
+              <option value="UPCOMING">即将开始</option>
+              <option value="ONGOING">进行中</option>
+              <option value="COMPLETED">已结束</option>
             </select>
           </div>
 

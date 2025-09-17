@@ -3,21 +3,22 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { InstitutionType } from '@/generated/prisma'
+// Removed InstitutionType enum import - now using string type
 
 export default function NewInstitutionPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
-    type: InstitutionType.UNIVERSITY,
+    type: 'UNIVERSITY',
+    description: '',
     country: '',
     city: '',
     website: ''
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
     // Clear error when user starts typing
@@ -144,10 +145,26 @@ export default function NewInstitutionPage() {
               onChange={handleInputChange}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
-              <option value={InstitutionType.UNIVERSITY}>大学</option>
-              <option value={InstitutionType.RESEARCH_INSTITUTE}>研究所</option>
-              <option value={InstitutionType.COMPANY}>企业</option>
+              <option value="UNIVERSITY">大学</option>
+              <option value="RESEARCH_INSTITUTE">研究所</option>
+              <option value="COMPANY">企业</option>
             </select>
+          </div>
+
+          {/* Description */}
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+              机构描述
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              rows={4}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="输入机构描述信息"
+            />
           </div>
 
           {/* Country */}

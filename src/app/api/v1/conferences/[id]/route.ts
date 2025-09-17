@@ -34,38 +34,7 @@ export async function GET(
       return createErrorResponse('Conference not found', 404)
     }
 
-    // Transform data
-    const transformedConference = {
-      id: conference.id,
-      name: conference.name,
-      acronym: conference.acronym,
-      description: conference.description,
-      website: conference.website,
-      status: conference.status,
-      submission_deadline: conference.submissionDeadline,
-      conference_date: conference.conferenceDate,
-      venue: conference.venue,
-      created_at: conference.createdAt,
-      updated_at: conference.updatedAt,
-      papers: conference.papers.map(paper => ({
-        id: paper.id,
-        title: paper.title,
-        abstract: paper.abstract,
-        doi: paper.doi,
-        status: paper.status,
-        seo_score: paper.seoScore,
-        authors: paper.authors.map(pa => ({
-          id: pa.author.id,
-          name: pa.author.name,
-          email: pa.author.email,
-          orcid: pa.author.orcid,
-          order: pa.order,
-          is_corresponding: pa.isCorresponding
-        }))
-      }))
-    }
-
-    return createApiResponse(transformedConference, 'Conference retrieved successfully')
+    return createApiResponse(conference, 'Conference retrieved successfully')
   } catch (error) {
     return handleApiError(error)
   }
@@ -117,21 +86,7 @@ export async function PUT(
       data: updateData
     })
 
-    // Transform data
-    const transformedConference = {
-      id: conference.id,
-      name: conference.name,
-      acronym: conference.acronym,
-      description: conference.description,
-      website: conference.website,
-      status: conference.status,
-      submission_deadline: conference.submissionDeadline,
-      conference_date: conference.conferenceDate,
-      created_at: conference.createdAt,
-      updated_at: conference.updatedAt
-    }
-
-    return createApiResponse(transformedConference, 'Conference updated successfully')
+    return createApiResponse(conference, 'Conference updated successfully')
   } catch (error) {
     return handleApiError(error)
   }

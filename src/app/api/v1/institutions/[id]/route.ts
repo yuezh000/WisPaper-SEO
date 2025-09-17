@@ -15,46 +15,14 @@ export async function GET(
     }
 
     const institution = await prisma.institution.findUnique({
-      where: { id },
-      include: {
-        authors: {
-          include: {
-            papers: {
-              include: {
-                paper: true
-              }
-            }
-          }
-        }
-      }
+      where: { id }
     })
 
     if (!institution) {
       return createErrorResponse('Institution not found', 404)
     }
 
-    // Transform data
-    const transformedInstitution = {
-      id: institution.id,
-      name: institution.name,
-      type: institution.type,
-      website: institution.website,
-      country: institution.country,
-      city: institution.city,
-      created_at: institution.createdAt,
-      updated_at: institution.updatedAt,
-      authors: institution.authors.map(author => ({
-        id: author.id,
-        name: author.name,
-        email: author.email,
-        orcid: author.orcid,
-        bio: author.bio,
-        created_at: author.createdAt,
-        updated_at: author.updatedAt
-      }))
-    }
-
-    return createApiResponse(transformedInstitution, 'Institution retrieved successfully')
+    return createApiResponse(institution, 'Institution retrieved successfully')
   } catch (error) {
     return handleApiError(error)
   }
@@ -82,12 +50,10 @@ export async function PUT(
       return createErrorResponse('Institution not found', 404)
     }
 
-    // Validate required fields
-    if (!body.name || !body.type) {
-      const missingFields = []
-      if (!body.name) missingFields.push('name')
-      if (!body.type) missingFields.push('type')
-      return createErrorResponse(`${missingFields.join(' and ')} are required`, 400, missingFields.join(' and '))
+    // Only validate the 'name' field is present
+    // 只校验 name 字段是否存在
+    if (!body.name) {
+      return createErrorResponse('name is required', 400)
     }
 
     const institution = await prisma.institution.update({
@@ -95,25 +61,14 @@ export async function PUT(
       data: {
         name: body.name,
         type: body.type,
+        description: body.description,
         website: body.website,
         country: body.country,
         city: body.city
       }
     })
 
-    // Transform data
-    const transformedInstitution = {
-      id: institution.id,
-      name: institution.name,
-      type: institution.type,
-      website: institution.website,
-      country: institution.country,
-      city: institution.city,
-      created_at: institution.createdAt,
-      updated_at: institution.updatedAt
-    }
-
-    return createApiResponse(transformedInstitution, 'Institution updated successfully')
+    return createApiResponse(institution, 'Institution updated successfully')
   } catch (error) {
     return handleApiError(error)
   }
@@ -151,6 +106,6 @@ export async function DELETE(
 }
 
 function isValidUUID(uuid: string): boolean {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
   return uuidRegex.test(uuid)
 }

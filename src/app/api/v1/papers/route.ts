@@ -91,44 +91,8 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Transform data
-    const transformedPapers = papers.map(paper => ({
-      id: paper.id,
-      title: paper.title,
-      abstract: paper.abstract,
-      doi: paper.doi,
-      arxiv_id: paper.arxivId,
-      pdf_url: paper.pdfUrl,
-      publication_date: paper.publicationDate,
-      venue: paper.venue,
-      pages: paper.pages,
-      volume: paper.volume,
-      issue: paper.issue,
-      citation_count: paper.citationCount,
-      status: paper.status,
-      seo_score: paper.seoScore,
-      authors: paper.authors.map(pa => ({
-        id: pa.author.id,
-        name: pa.author.name,
-        email: pa.author.email,
-        orcid: pa.author.orcid,
-        institution: pa.author.institution,
-        order: pa.order,
-        is_corresponding: pa.isCorresponding
-      })),
-      conference: paper.conference,
-      keywords: paper.keywords.map(pk => ({
-        id: pk.keyword.id,
-        name: pk.keyword.name,
-        category: pk.keyword.category,
-        relevance_score: pk.relevanceScore
-      })),
-      created_at: paper.createdAt,
-      updated_at: paper.updatedAt
-    }))
-
     return createApiResponse(
-      transformedPapers,
+      papers,
       'Papers retrieved successfully',
       {
         page,
@@ -214,27 +178,7 @@ export async function POST(request: NextRequest) {
       return newPaper
     })
 
-    // Transform data
-    const transformedPaper = {
-      id: paper.id,
-      title: paper.title,
-      abstract: paper.abstract,
-      doi: paper.doi,
-      arxiv_id: paper.arxivId,
-      pdf_url: paper.pdfUrl,
-      publication_date: paper.publicationDate,
-      venue: paper.venue,
-      pages: paper.pages,
-      volume: paper.volume,
-      issue: paper.issue,
-      citation_count: paper.citationCount,
-      status: paper.status,
-      seo_score: paper.seoScore,
-      created_at: paper.createdAt,
-      updated_at: paper.updatedAt
-    }
-
-    return createApiResponse(transformedPaper, 'Paper created successfully', undefined, 201)
+    return createApiResponse(paper, 'Paper created successfully', undefined, 201)
   } catch (error) {
     return handleApiError(error)
   }

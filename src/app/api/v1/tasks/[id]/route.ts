@@ -27,29 +27,7 @@ export async function GET(
       return createErrorResponse('Task not found', 404)
     }
 
-    // Transform data
-    const transformedTask = {
-      id: task.id,
-      type: task.type,
-      status: task.status,
-      priority: task.priority,
-      payload: task.payload,
-      result: task.result,
-      error: task.error,
-      started_at: task.startedAt,
-      completed_at: task.completedAt,
-      created_at: task.createdAt,
-      updated_at: task.updatedAt,
-      logs: task.logs.map(log => ({
-        id: log.id,
-        level: log.level,
-        message: log.message,
-        data: log.data,
-        created_at: log.createdAt
-      }))
-    }
-
-    return createApiResponse(transformedTask, 'Task retrieved successfully')
+    return createApiResponse(task, 'Task retrieved successfully')
   } catch (error) {
     return handleApiError(error)
   }
@@ -119,22 +97,7 @@ export async function PUT(
       data: updateData
     })
 
-    // Transform data
-    const transformedTask = {
-      id: task.id,
-      type: task.type,
-      status: task.status,
-      priority: task.priority,
-      payload: task.payload,
-      result: task.result,
-      error: task.error,
-      started_at: task.startedAt,
-      completed_at: task.completedAt,
-      created_at: task.createdAt,
-      updated_at: task.updatedAt
-    }
-
-    return createApiResponse(transformedTask, 'Task updated successfully')
+    return createApiResponse(task, 'Task updated successfully')
   } catch (error) {
     return handleApiError(error)
   }

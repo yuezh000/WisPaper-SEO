@@ -54,27 +54,8 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Transform data
-    const transformedTasks = tasks.map(task => ({
-      id: task.id,
-      type: task.type,
-      status: task.status,
-      priority: task.priority,
-      payload: task.payload,
-      result: task.result,
-      error_message: task.errorMessage,
-      retry_count: task.retryCount,
-      max_retries: task.maxRetries,
-      scheduled_at: task.scheduledAt,
-      started_at: task.startedAt,
-      completed_at: task.completedAt,
-      log_count: task._count.logs,
-      created_at: task.createdAt,
-      updated_at: task.updatedAt
-    }))
-
     return createApiResponse(
-      transformedTasks,
+      tasks,
       'Tasks retrieved successfully',
       {
         page,
@@ -128,19 +109,7 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // Transform data
-    const transformedTask = {
-      id: task.id,
-      type: task.type,
-      status: task.status,
-      priority: task.priority,
-      payload: task.payload,
-      scheduled_at: task.scheduledAt,
-      created_at: task.createdAt,
-      updated_at: task.updatedAt
-    }
-
-    return createApiResponse(transformedTask, 'Task created successfully', undefined, 201)
+    return createApiResponse(task, 'Task created successfully', undefined, 201)
   } catch (error) {
     return handleApiError(error)
   }

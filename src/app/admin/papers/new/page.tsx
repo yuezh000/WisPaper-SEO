@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { PaperStatus } from '@/generated/prisma'
+// Removed PaperStatus enum import - now using string type
 
 interface Author {
   id: string
@@ -45,7 +45,7 @@ export default function NewPaperPage() {
     pages: '',
     volume: '',
     issue: '',
-    status: PaperStatus.DRAFT,
+    status: 'DRAFT',
     seoScore: ''
   })
   const [selectedAuthors, setSelectedAuthors] = useState<string[]>([])
@@ -511,9 +511,9 @@ export default function NewPaperPage() {
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
-                <option value={PaperStatus.DRAFT}>草稿</option>
-                <option value={PaperStatus.PUBLISHED}>已发布</option>
-                <option value={PaperStatus.ARCHIVED}>已归档</option>
+                <option value="DRAFT">草稿</option>
+                <option value="PUBLISHED">已发布</option>
+                <option value="ARCHIVED">已归档</option>
               </select>
             </div>
 

@@ -61,25 +61,8 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Transform data
-    const transformedConferences = conferences.map(conference => ({
-      id: conference.id,
-      name: conference.name,
-      acronym: conference.acronym,
-      description: conference.description,
-      website: conference.website,
-      submission_deadline: conference.submissionDeadline,
-      notification_date: conference.notificationDate,
-      conference_date: conference.conferenceDate,
-      venue: conference.venue,
-      status: conference.status,
-      paper_count: conference._count.papers,
-      created_at: conference.createdAt,
-      updated_at: conference.updatedAt
-    }))
-
     return createApiResponse(
-      transformedConferences,
+      conferences,
       'Conferences retrieved successfully',
       {
         page,
@@ -148,23 +131,7 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // Transform data
-    const transformedConference = {
-      id: conference.id,
-      name: conference.name,
-      acronym: conference.acronym,
-      description: conference.description,
-      website: conference.website,
-      submission_deadline: conference.submissionDeadline,
-      notification_date: conference.notificationDate,
-      conference_date: conference.conferenceDate,
-      venue: conference.venue,
-      status: conference.status,
-      created_at: conference.createdAt,
-      updated_at: conference.updatedAt
-    }
-
-    return createApiResponse(transformedConference, 'Conference created successfully', undefined, 201)
+    return createApiResponse(conference, 'Conference created successfully', undefined, 201)
   } catch (error) {
     return handleApiError(error)
   }

@@ -34,30 +34,7 @@ export async function GET(
       return createErrorResponse('Author not found', 404)
     }
 
-    // Transform data
-    const transformedAuthor = {
-      id: author.id,
-      name: author.name,
-      email: author.email,
-      orcid: author.orcid,
-      bio: author.bio,
-      institution: author.institution,
-      created_at: author.createdAt,
-      updated_at: author.updatedAt,
-      papers: author.papers.map(pa => ({
-        id: pa.paper.id,
-        title: pa.paper.title,
-        abstract: pa.paper.abstract,
-        doi: pa.paper.doi,
-        status: pa.paper.status,
-        seo_score: pa.paper.seoScore,
-        order: pa.order,
-        is_corresponding: pa.isCorresponding,
-        conference: pa.paper.conference
-      }))
-    }
-
-    return createApiResponse(transformedAuthor, 'Author retrieved successfully')
+    return createApiResponse(author, 'Author retrieved successfully')
   } catch (error) {
     return handleApiError(error)
   }
@@ -99,19 +76,7 @@ export async function PUT(
       data: updateData
     })
 
-    // Transform data
-    const transformedAuthor = {
-      id: author.id,
-      name: author.name,
-      email: author.email,
-      orcid: author.orcid,
-      bio: author.bio,
-      institution_id: author.institutionId,
-      created_at: author.createdAt,
-      updated_at: author.updatedAt
-    }
-
-    return createApiResponse(transformedAuthor, 'Author updated successfully')
+    return createApiResponse(author, 'Author updated successfully')
   } catch (error) {
     return handleApiError(error)
   }

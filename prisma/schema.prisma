@@ -11,70 +11,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Enums
-enum PaperStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
-enum ConferenceStatus {
-  UPCOMING
-  ONGOING
-  COMPLETED
-}
-
-enum JournalStatus {
-  ACTIVE
-  INACTIVE
-  SUSPENDED
-}
-
-enum InstitutionType {
-  UNIVERSITY
-  RESEARCH_INSTITUTE
-  COMPANY
-}
-
-enum AbstractSource {
-  ORIGINAL
-  AI_GENERATED
-  MANUAL
-}
-
-enum TaskType {
-  CRAWL
-  PARSE_PDF
-  GENERATE_ABSTRACT
-  INDEX_PAGE
-}
-
-enum TaskStatus {
-  PENDING
-  RUNNING
-  COMPLETED
-  FAILED
-}
-
-enum LogLevel {
-  INFO
-  WARN
-  ERROR
-}
+// Enums removed - all fields now use String type
 
 // Core Models
 model Institution {
-  id        String   @id @default(uuid())
-  name      String
-  type      InstitutionType
-  country   String?
-  city      String?
-  website   String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  // Relations
-  authors Author[]
+  id          String   @id @default(uuid())
+  name        String
+  type        String?
+  description String?
+  country     String?
+  city        String?
+  website     String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("institutions")
 }
@@ -84,15 +33,11 @@ model Author {
   name          String
   email         String?
   orcid         String?
-  institutionId String   @map("institution_id")
+  institutionId String?  @map("institution_id")
   bio           String?
   homepage      String?
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
-
-  // Relations
-  institution Institution @relation(fields: [institutionId], references: [id])
-  papers     PaperAuthor[]
 
   @@map("authors")
 }
@@ -108,9 +53,6 @@ model Venue {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  // Relations
-  conferences Conference[]
-
   @@map("venues")
 }
 
@@ -124,13 +66,9 @@ model Conference {
   notificationDate   DateTime?         @map("notification_date")
   conferenceDate     DateTime?         @map("conference_date")
   venueId            String?           @map("venue_id")
-  status             ConferenceStatus
+  status             String?
   createdAt          DateTime          @default(now()) @map("created_at")
   updatedAt          DateTime          @updatedAt @map("updated_at")
-
-  // Relations
-  venue  Venue?  @relation(fields: [venueId], references: [id])
-  papers Paper[]
 
   @@map("conferences")
 }
@@ -145,12 +83,9 @@ model Journal {
   website     String?
   publisher   String?
   impactFactor Float?      @map("impact_factor")
-  status      JournalStatus
+  status      String?
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
-
-  // Relations
-  papers Paper[]
 
   @@map("journals")
 }
@@ -170,17 +105,10 @@ model Paper {
   volume         String?
   issue          String?
   citationCount  Int         @default(0) @map("citation_count")
-  status         PaperStatus
+  status         String?
   seoScore       Float?      @map("seo_score")
   createdAt      DateTime    @default(now()) @map("created_at")
   updatedAt      DateTime    @updatedAt @map("updated_at")
-
-  // Relations
-  conference Conference? @relation(fields: [conferenceId], references: [id])
-  journal    Journal?    @relation(fields: [journalId], references: [id])
-  authors    PaperAuthor[]
-  keywords   PaperKeyword[]
-  abstracts  Abstract[]
 
   @@map("papers")
 }
@@ -193,32 +121,26 @@ model Keyword {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
-  // Relations
-  papers PaperKeyword[]
-
   @@map("keywords")
 }
 
 model Abstract {
   id           String        @id @default(uuid())
-  paperId      String        @map("paper_id")
+  paperId      String?       @map("paper_id")
   content      String
   language     String        @default("en")
-  source       AbstractSource
+  source       String?
   qualityScore Float?        @map("quality_score")
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
-
-  // Relations
-  paper Paper @relation(fields: [paperId], references: [id])
 
   @@map("abstracts")
 }
 
 model Task {
   id           String     @id @default(uuid())
-  type         TaskType
-  status       TaskStatus
+  type         String?
+  status       String?
   priority     Int        @default(5)
   payload      Json
   result       Json?
@@ -231,22 +153,16 @@ model Task {
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @updatedAt @map("updated_at")
 
-  // Relations
-  logs TaskLog[]
-
   @@map("tasks")
 }
 
 model TaskLog {
   id        String   @id @default(uuid())
-  taskId    String   @map("task_id")
-  level     LogLevel
+  taskId    String?  @map("task_id")
+  level     String?
   message   String
   metadata  Json?
   createdAt DateTime @default(now()) @map("created_at")
-
-  // Relations
-  task Task @relation(fields: [taskId], references: [id])
 
   @@map("task_logs")
 }
@@ -254,29 +170,21 @@ model TaskLog {
 // Junction Tables
 model PaperAuthor {
   id              String  @id @default(uuid())
-  paperId         String  @map("paper_id")
-  authorId        String  @map("author_id")
+  paperId         String? @map("paper_id")
+  authorId        String? @map("author_id")
   order           Int
   isCorresponding Boolean @default(false) @map("is_corresponding")
   createdAt       DateTime @default(now()) @map("created_at")
-
-  // Relations
-  paper  Paper  @relation(fields: [paperId], references: [id])
-  author Author @relation(fields: [authorId], references: [id])
 
   @@map("paper_authors")
 }
 
 model PaperKeyword {
   id              String  @id @default(uuid())
-  paperId         String  @map("paper_id")
-  keywordId       String  @map("keyword_id")
+  paperId         String? @map("paper_id")
+  keywordId       String? @map("keyword_id")
   relevanceScore  Float?  @map("relevance_score")
   createdAt       DateTime @default(now()) @map("created_at")
-
-  // Relations
-  paper   Paper   @relation(fields: [paperId], references: [id])
-  keyword Keyword @relation(fields: [keywordId], references: [id])
 
   @@map("paper_keywords")
 }

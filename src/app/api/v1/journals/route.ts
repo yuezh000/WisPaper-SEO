@@ -58,25 +58,8 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Transform data
-    const transformedJournals = journals.map(journal => ({
-      id: journal.id,
-      name: journal.name,
-      acronym: journal.acronym,
-      issn: journal.issn,
-      eissn: journal.eissn,
-      description: journal.description,
-      website: journal.website,
-      publisher: journal.publisher,
-      impact_factor: journal.impactFactor,
-      status: journal.status,
-      paper_count: journal._count.papers,
-      created_at: journal.createdAt,
-      updated_at: journal.updatedAt
-    }))
-
     return createApiResponse(
-      transformedJournals,
+      journals,
       'Journals retrieved successfully',
       {
         page,
@@ -118,23 +101,7 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // Transform data
-    const transformedJournal = {
-      id: journal.id,
-      name: journal.name,
-      acronym: journal.acronym,
-      issn: journal.issn,
-      eissn: journal.eissn,
-      description: journal.description,
-      website: journal.website,
-      publisher: journal.publisher,
-      impact_factor: journal.impactFactor,
-      status: journal.status,
-      created_at: journal.createdAt,
-      updated_at: journal.updatedAt
-    }
-
-    return createApiResponse(transformedJournal, 'Journal created successfully', undefined, 201)
+    return createApiResponse(journal, 'Journal created successfully', undefined, 201)
   } catch (error) {
     return handleApiError(error)
   }

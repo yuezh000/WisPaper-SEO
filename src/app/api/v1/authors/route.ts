@@ -53,22 +53,8 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Transform data
-    const transformedAuthors = authors.map(author => ({
-      id: author.id,
-      name: author.name,
-      email: author.email,
-      orcid: author.orcid,
-      institution: author.institution,
-      bio: author.bio,
-      homepage: author.homepage,
-      paper_count: author._count.papers,
-      created_at: author.createdAt,
-      updated_at: author.updatedAt
-    }))
-
     return createApiResponse(
-      transformedAuthors,
+      authors,
       'Authors retrieved successfully',
       {
         page,
@@ -127,20 +113,7 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // Transform data
-    const transformedAuthor = {
-      id: author.id,
-      name: author.name,
-      email: author.email,
-      orcid: author.orcid,
-      institution: author.institution,
-      bio: author.bio,
-      homepage: author.homepage,
-      created_at: author.createdAt,
-      updated_at: author.updatedAt
-    }
-
-    return createApiResponse(transformedAuthor, 'Author created successfully', undefined, 201)
+    return createApiResponse(author, 'Author created successfully', undefined, 201)
   } catch (error) {
     return handleApiError(error)
   }

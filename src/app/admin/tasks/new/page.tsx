@@ -3,14 +3,14 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { TaskType, TaskStatus } from '@/generated/prisma'
+// Removed TaskType and TaskStatus enum imports - now using string type
 
 export default function NewTaskPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
-    type: TaskType.CRAWL,
-    status: TaskStatus.PENDING,
+    type: 'CRAWL',
+    status: 'PENDING',
     priority: '5',
     payload: '',
     maxRetries: '3',
@@ -64,28 +64,28 @@ export default function NewTaskPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const getTaskTypeDescription = (type: TaskType) => {
-    const descriptions = {
-      [TaskType.CRAWL]: '爬取网页内容，参数示例：{"url": "https://example.com", "selector": ".content"}',
-      [TaskType.PARSE_PDF]: '解析PDF文档，参数示例：{"pdfUrl": "https://example.com/paper.pdf", "extractText": true}',
-      [TaskType.GENERATE_ABSTRACT]: '生成论文摘要，参数示例：{"paperId": "uuid", "language": "en"}',
-      [TaskType.INDEX_PAGE]: '索引页面内容，参数示例：{"pageId": "uuid", "content": "page content"}'
+  const getTaskTypeDescription = (type: string) => {
+    const descriptions: Record<string, string> = {
+      'CRAWL': '爬取网页内容，参数示例：{"url": "https://example.com", "selector": ".content"}',
+      'PARSE_PDF': '解析PDF文档，参数示例：{"pdfUrl": "https://example.com/paper.pdf", "extractText": true}',
+      'GENERATE_ABSTRACT': '生成论文摘要，参数示例：{"paperId": "uuid", "language": "en"}',
+      'INDEX_PAGE': '索引页面内容，参数示例：{"pageId": "uuid", "content": "page content"}'
     }
     return descriptions[type] || ''
   }
 
-  const getDefaultPayload = (type: TaskType) => {
-    const defaults = {
-      [TaskType.CRAWL]: '{\n  "url": "https://example.com",\n  "selector": ".content"\n}',
-      [TaskType.PARSE_PDF]: '{\n  "pdfUrl": "https://example.com/paper.pdf",\n  "extractText": true\n}',
-      [TaskType.GENERATE_ABSTRACT]: '{\n  "paperId": "paper-uuid",\n  "language": "en"\n}',
-      [TaskType.INDEX_PAGE]: '{\n  "pageId": "page-uuid",\n  "content": "page content"\n}'
+  const getDefaultPayload = (type: string) => {
+    const defaults: Record<string, string> = {
+      'CRAWL': '{\n  "url": "https://example.com",\n  "selector": ".content"\n}',
+      'PARSE_PDF': '{\n  "pdfUrl": "https://example.com/paper.pdf",\n  "extractText": true\n}',
+      'GENERATE_ABSTRACT': '{\n  "paperId": "paper-uuid",\n  "language": "en"\n}',
+      'INDEX_PAGE': '{\n  "pageId": "page-uuid",\n  "content": "page content"\n}'
     }
     return defaults[type] || '{}'
   }
 
   const handleTaskTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newType = e.target.value as TaskType
+    const newType = e.target.value
     setFormData(prev => ({ 
       ...prev, 
       type: newType,
@@ -166,10 +166,10 @@ export default function NewTaskPage() {
               onChange={handleTaskTypeChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
             >
-              <option value={TaskType.CRAWL}>爬虫任务</option>
-              <option value={TaskType.PARSE_PDF}>PDF解析</option>
-              <option value={TaskType.GENERATE_ABSTRACT}>摘要生成</option>
-              <option value={TaskType.INDEX_PAGE}>页面索引</option>
+              <option value="CRAWL">爬虫任务</option>
+              <option value="PARSE_PDF">PDF解析</option>
+              <option value="GENERATE_ABSTRACT">摘要生成</option>
+              <option value="INDEX_PAGE">页面索引</option>
             </select>
             <p className="mt-1 text-sm text-gray-500">
               {getTaskTypeDescription(formData.type)}
@@ -188,10 +188,10 @@ export default function NewTaskPage() {
               onChange={handleInputChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
             >
-              <option value={TaskStatus.PENDING}>等待中</option>
-              <option value={TaskStatus.RUNNING}>运行中</option>
-              <option value={TaskStatus.COMPLETED}>已完成</option>
-              <option value={TaskStatus.FAILED}>失败</option>
+              <option value="PENDING">等待中</option>
+              <option value="RUNNING">运行中</option>
+              <option value="COMPLETED">已完成</option>
+              <option value="FAILED">失败</option>
             </select>
           </div>
 

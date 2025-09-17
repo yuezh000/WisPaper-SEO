@@ -40,7 +40,8 @@ const fakerInstance = process.env.NODE_ENV === 'test' ? mockFaker : faker
 export interface InstitutionData {
   id?: string
   name: string
-  type: 'UNIVERSITY' | 'RESEARCH_INSTITUTE' | 'COMPANY'
+  type?: string
+  description?: string
   country?: string
   city?: string
   website?: string
@@ -53,7 +54,7 @@ export interface AuthorData {
   name: string
   email?: string
   orcid?: string
-  institutionId: string
+  institutionId?: string
   bio?: string
   homepage?: string
   createdAt?: Date
@@ -70,7 +71,7 @@ export interface ConferenceData {
   notificationDate?: Date
   conferenceDate?: Date
   venueId?: string
-  status: 'UPCOMING' | 'ONGOING' | 'COMPLETED'
+  status?: string
   createdAt?: Date
   updatedAt?: Date
 }
@@ -85,7 +86,7 @@ export interface JournalData {
   website?: string
   publisher?: string
   impactFactor?: number
-  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
+  status?: string
   createdAt?: Date
   updatedAt?: Date
 }
@@ -105,7 +106,7 @@ export interface PaperData {
   volume?: string
   issue?: string
   citationCount?: number
-  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'
+  status?: string
   seoScore?: number
   createdAt?: Date
   updatedAt?: Date
@@ -113,8 +114,8 @@ export interface PaperData {
 
 export interface TaskData {
   id?: string
-  type: 'CRAWL' | 'PARSE_PDF' | 'GENERATE_ABSTRACT' | 'INDEX_PAGE'
-  status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED'
+  type?: string
+  status?: string
   priority?: number
   payload: any
   result?: any
@@ -133,13 +134,14 @@ export interface TaskData {
  */
 export class InstitutionFactory {
   static create(overrides: Partial<InstitutionData> = {}): InstitutionData {
-    const institutionTypes: Array<'UNIVERSITY' | 'RESEARCH_INSTITUTE' | 'COMPANY'> = 
+    const institutionTypes: string[] = 
       ['UNIVERSITY', 'RESEARCH_INSTITUTE', 'COMPANY']
     
     return {
       id: fakerInstance.datatype.uuid(),
       name: fakerInstance.company.name(),
       type: institutionTypes[Math.floor(Math.random() * institutionTypes.length)],
+      description: fakerInstance.datatype.boolean() ? fakerInstance.lorem.paragraph() : undefined,
       country: fakerInstance.datatype.boolean() ? 'China' : 'United States',
       city: fakerInstance.datatype.boolean() ? 'Beijing' : 'New York',
       website: fakerInstance.datatype.boolean() ? fakerInstance.internet.url() : undefined,
@@ -210,7 +212,7 @@ export class AuthorFactory {
  */
 export class ConferenceFactory {
   static create(overrides: Partial<ConferenceData> = {}): ConferenceData {
-    const statuses: Array<'UPCOMING' | 'ONGOING' | 'COMPLETED'> = 
+    const statuses: string[] = 
       ['UPCOMING', 'ONGOING', 'COMPLETED']
     
     return {
@@ -253,7 +255,7 @@ export class ConferenceFactory {
  */
 export class JournalFactory {
   static create(overrides: Partial<JournalData> = {}): JournalData {
-    const statuses: Array<'ACTIVE' | 'INACTIVE' | 'SUSPENDED'> = 
+    const statuses: string[] = 
       ['ACTIVE', 'INACTIVE', 'SUSPENDED']
     
     return {
@@ -298,7 +300,7 @@ export class JournalFactory {
  */
 export class PaperFactory {
   static create(overrides: Partial<PaperData> = {}): PaperData {
-    const statuses: Array<'DRAFT' | 'PUBLISHED' | 'ARCHIVED'> = 
+    const statuses: string[] = 
       ['DRAFT', 'PUBLISHED', 'ARCHIVED']
     
     return {
@@ -355,9 +357,9 @@ export class PaperFactory {
  */
 export class TaskFactory {
   static create(overrides: Partial<TaskData> = {}): TaskData {
-    const types: Array<'CRAWL' | 'PARSE_PDF' | 'GENERATE_ABSTRACT' | 'INDEX_PAGE'> = 
+    const types: string[] = 
       ['CRAWL', 'PARSE_PDF', 'GENERATE_ABSTRACT', 'INDEX_PAGE']
-    const statuses: Array<'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED'> = 
+    const statuses: string[] = 
       ['PENDING', 'RUNNING', 'COMPLETED', 'FAILED']
     
     return {

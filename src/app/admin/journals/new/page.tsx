@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { JournalStatus } from '@/generated/prisma'
+// Removed JournalStatus enum import - now using string type
 
 export default function NewJournalPage() {
   const router = useRouter()
@@ -17,7 +17,7 @@ export default function NewJournalPage() {
     website: '',
     publisher: '',
     impactFactor: '',
-    status: JournalStatus.ACTIVE
+    status: 'ACTIVE'
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -186,9 +186,9 @@ export default function NewJournalPage() {
               onChange={handleInputChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
             >
-              <option value={JournalStatus.ACTIVE}>活跃</option>
-              <option value={JournalStatus.INACTIVE}>非活跃</option>
-              <option value={JournalStatus.SUSPENDED}>暂停</option>
+              <option value="ACTIVE">活跃</option>
+              <option value="INACTIVE">非活跃</option>
+              <option value="SUSPENDED">暂停</option>
             </select>
           </div>
 

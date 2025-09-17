@@ -3,7 +3,6 @@ export interface ApiResponse<T = any> {
   success: boolean
   data?: T
   message?: string
-  error?: string
   pagination?: PaginationInfo
 }
 
@@ -101,6 +100,30 @@ export interface CreateTaskRequest {
   priority?: number
   payload: Record<string, any>
   scheduled_at?: string
+}
+
+// Institution API Types
+export interface InstitutionQueryParams extends SearchParams {
+  type?: string
+  country?: string
+}
+
+export interface CreateInstitutionRequest {
+  name: string
+  type: string
+  description?: string
+  country?: string
+  city?: string
+  website?: string
+}
+
+export interface UpdateInstitutionRequest {
+  name?: string
+  type?: string
+  description?: string
+  country?: string
+  city?: string
+  website?: string
 }
 
 // Search API Types

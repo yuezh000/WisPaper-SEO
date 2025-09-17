@@ -48,51 +48,7 @@ export async function GET(
       return createErrorResponse('Paper not found', 404)
     }
 
-    // Transform data
-    const transformedPaper = {
-      id: paper.id,
-      title: paper.title,
-      abstract: paper.abstract,
-      doi: paper.doi,
-      arxiv_id: paper.arxivId,
-      pdf_url: paper.pdfUrl,
-      publication_date: paper.publicationDate,
-      venue: paper.venue,
-      pages: paper.pages,
-      volume: paper.volume,
-      issue: paper.issue,
-      citation_count: paper.citationCount,
-      status: paper.status,
-      seo_score: paper.seoScore,
-      authors: paper.authors.map(pa => ({
-        id: pa.author.id,
-        name: pa.author.name,
-        email: pa.author.email,
-        orcid: pa.author.orcid,
-        institution: pa.author.institution,
-        order: pa.order,
-        is_corresponding: pa.isCorresponding
-      })),
-      conference: paper.conference,
-      keywords: paper.keywords.map(pk => ({
-        id: pk.keyword.id,
-        name: pk.keyword.name,
-        category: pk.keyword.category,
-        relevance_score: pk.relevanceScore
-      })),
-      abstracts: paper.abstracts.map(abstract => ({
-        id: abstract.id,
-        content: abstract.content,
-        language: abstract.language,
-        source: abstract.source,
-        quality_score: abstract.qualityScore,
-        created_at: abstract.createdAt
-      })),
-      created_at: paper.createdAt,
-      updated_at: paper.updatedAt
-    }
-
-    return createApiResponse(transformedPaper, 'Paper retrieved successfully')
+    return createApiResponse(paper, 'Paper retrieved successfully')
   } catch (error) {
     return handleApiError(error)
   }
@@ -149,43 +105,7 @@ export async function PUT(
       }
     })
 
-    // Transform data
-    const transformedPaper = {
-      id: updatedPaper.id,
-      title: updatedPaper.title,
-      abstract: updatedPaper.abstract,
-      doi: updatedPaper.doi,
-      arxiv_id: updatedPaper.arxivId,
-      pdf_url: updatedPaper.pdfUrl,
-      publication_date: updatedPaper.publicationDate,
-      venue: updatedPaper.venue,
-      pages: updatedPaper.pages,
-      volume: updatedPaper.volume,
-      issue: updatedPaper.issue,
-      citation_count: updatedPaper.citationCount,
-      status: updatedPaper.status,
-      seo_score: updatedPaper.seoScore,
-      authors: updatedPaper.authors.map(pa => ({
-        id: pa.author.id,
-        name: pa.author.name,
-        email: pa.author.email,
-        orcid: pa.author.orcid,
-        institution: pa.author.institution,
-        order: pa.order,
-        is_corresponding: pa.isCorresponding
-      })),
-      conference: updatedPaper.conference,
-      keywords: updatedPaper.keywords.map(pk => ({
-        id: pk.keyword.id,
-        name: pk.keyword.name,
-        category: pk.keyword.category,
-        relevance_score: pk.relevanceScore
-      })),
-      created_at: updatedPaper.createdAt,
-      updated_at: updatedPaper.updatedAt
-    }
-
-    return createApiResponse(transformedPaper, 'Paper updated successfully')
+    return createApiResponse(updatedPaper, 'Paper updated successfully')
   } catch (error) {
     return handleApiError(error)
   }

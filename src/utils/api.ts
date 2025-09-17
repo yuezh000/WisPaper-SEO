@@ -21,14 +21,14 @@ export function createApiResponse<T>(
 // Create error response
 export function createErrorResponse(
   message: string,
-  status: number = 400,
-  error?: string
+  status: number = 400
 ): NextResponse<ApiResponse> {
   const response: ApiResponse = {
     success: false,
-    message,
-    error
+    message
   }
+
+  console.log(response)
 
   return NextResponse.json(response, { status })
 }
@@ -62,7 +62,7 @@ export function calculatePagination(
 
 // Validate UUID
 export function isValidUUID(uuid: string): boolean {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
   return uuidRegex.test(uuid)
 }
 
@@ -71,7 +71,7 @@ export function handleApiError(error: unknown): NextResponse<ApiResponse> {
   console.error('API Error:', error)
   
   if (error instanceof Error) {
-    return createErrorResponse(error.message, 500, error.name)
+    return createErrorResponse(error.message, 500)
   }
   
   return createErrorResponse('Internal server error', 500)
